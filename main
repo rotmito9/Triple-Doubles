@@ -1,0 +1,189 @@
+import check
+
+def triple_double_count(listl):
+  '''
+  consumes a list: [listl] and returns the amount of triple doubles for that 
+  player
+  
+  triple_double_count: (listof Str) -> Nat
+  '''
+  triple_double_count = 0
+    
+  for i in range(len(listl[2:])):
+    if (int(listl[i + 2])) >= 10:
+      triple_double_count += 1
+    
+  return triple_double_count
+  
+  
+def triple_doubles(filename_in, filename_out):
+  '''
+  consumes two strings [filename_in] as the input file name and a string 
+  [filename_out] that is the output file name.
+  returns None and writes to the file name in filename_out each player's name
+  the number of triple-doubles they have accumulated
+  
+  Effects:
+    Reads file called filename_in
+    Writes to a file called filename_out
+    
+  triple_doubles: Str Str -> None
+  
+  Examples:
+    triple_doubles("players_example.txt", "example_actual.txt") => None
+    players_example.txt contains:
+    Julius "Dr. J" Erving, 1, 10, 10, 10, 0, 0
+    Julius "Dr. J" Erving, 2, 2, 20, 20, 30, 0
+    Michael Jordan, 1, 0, 0, 2, 2, 3
+    Julius "Dr. J" Erving, 3, 10, 20, 20, 10, 3
+    Scottie Pippen, 1, 0, 20, 20, 30, 1
+    Wilt Chamberlain, 1, 0, 20, 20, 30, 4
+    Zack Brion, 1, 20, 20, 20, 10, 20
+    Wilt Chamberlain, 2, 10, 20, 30, 10, 2
+    Wilt Chamberlain, 3, 20, 20, 1, 1, 1
+    
+    and the file example_actual.txt contains:
+
+    Julius "Dr. J" Erving,3
+    Michael Jordan,0
+    Scottie Pippen,1
+    Wilt Chamberlain,2
+    Zack Brion,1
+  '''
+  fin = open(filename_in  , 'r')
+  listl=[]
+  for line in fin:
+	  strip_lines=line.strip("\n")
+	  listli=strip_lines.split(",")
+	  m=listl.append(listli)
+
+  listl = sorted(listl)
+  
+  fin.close()
+  
+  name_list = []
+  triple_double_list = []
+  
+  for i in range(len(listl)):
+    if (listl[i][0] in name_list):
+      if triple_double_count(listl[i]) >= 3:
+        index = name_list.index(listl[i][0])
+        triple_double_list[index] += 1
+    else:
+      name_list += [listl[i][0]]
+      if triple_double_count(listl[i]) >= 3:
+        triple_double_list += [1]
+      else:
+        triple_double_list += [0]
+    
+
+  fout = open(filename_out, 'w')
+  for i in range(len(name_list)):
+    fout.write(name_list[i])
+    fout.write(",")
+    fout.write(str(triple_double_list[i]))
+    fout.write("\n")
+  
+  fout.close()  
+
+##Examples:
+##players_example.txt contains:
+##Julius "Dr. J" Erving, 1, 10, 10, 10, 0, 0
+##Julius "Dr. J" Erving, 2, 2, 20, 20, 30, 0
+##Michael Jordan, 1, 0, 0, 2, 2, 3
+##Julius "Dr. J" Erving, 3, 10, 20, 20, 10, 3
+##Scottie Pippen, 1, 0, 20, 20, 30, 1
+##Wilt Chamberlain, 1, 0, 20, 20, 30, 4
+##Zack Brion, 1, 20, 20, 20, 10, 20
+##Wilt Chamberlain, 2, 10, 20, 30, 10, 2
+##Wilt Chamberlain, 3, 20, 20, 1, 1, 1
+
+##example_actual.txt contains:
+##Julius "Dr. J" Erving,3
+##Michael Jordan,0
+##Scottie Pippen,1
+##Wilt Chamberlain,2
+##Zack Brion,1
+check.set_file_exact("example_actual.txt", 
+                     "example_expected.txt")  
+check.expect("Example", triple_doubles("players_example.txt", 
+                                       "example_actual.txt"), None)
+
+
+##players_example2.txt contains:
+##Zack Brion,1,0,1,1,1,1
+##Wilt Chamberlain,1,100,15,10,15,16
+##Michael Jordan,2,20,10,9,3,2
+##Scottie Pippen,2,20,10,29,3,2
+##Julius "Dr. J" Erving,3,24,10,1,0,2
+##Wilt Chamberlain,2,50,15,10,15,16
+
+##example2_actual.txt contains:
+##Julius "Dr. J" Erving,0
+##Michael Jordan,0
+##Scottie Pippen,1
+##Wilt Chamberlain,2
+##Zack Brion,0
+check.set_file_exact("example2_actual.txt", 
+                     "example2_expected.txt")  
+check.expect("Example", triple_doubles("players_example2.txt", 
+                                       "example2_actual.txt"), None)
+
+##Tests:
+##players1.txt contains:
+##Steph Curry, 1, 10, 10, 10, 0, 0
+
+##a10q02_single_actual1.txt contains:
+##Steph Curry,1
+check.set_file_exact("a10q02_single_actual1.txt",
+                     "a10q02_single_expected1.txt")
+check.expect("Typical Value", triple_doubles("players1.txt",
+                                             "a10q02_single_actual1.txt"), None)
+
+##players2.txt contains: 
+##Michael Jordan, 1, 10, 10, 10, 0, 0
+##Steph Curry, 1, 20, 30, 0, 0, 9
+##Michael Jordan, 2, 100, 100, 20, 90, 0
+##Steph Curry, 2, 30, 100, 0, 90, 2
+##Michael Jordan, 3, 2, 1, 2, 3, 2
+
+##a10q02_single_actual2.txt contains:
+##Michael Jordan,2
+##Steph Curry,1
+
+check.set_file_exact("a10q02_single_actual2.txt",
+                     "a10q02_single_expected2.txt")
+check.expect("Multiple Triple Double", triple_doubles("players2.txt",
+                                            "a10q02_single_actual2.txt"), None)
+
+##players3.txt contains:
+##Michael Jordan, 1, 0, 0, 0, 0, 0
+##Steph Curry, 1, 2, 9, 20, 90, 2
+##Kevin Durant, 1, 2, 3, 20, 19, 1
+##Scottie Pippen, 1, 409, 2, 0, 9, 2
+
+##a10q02_single_actual3.txt contains:
+##Kevin Durant,0
+##Michael Jordan,0
+##Scottie Pippen,0
+##Steph Curry,0
+
+check.set_file_exact("a10q02_single_actual3.txt",
+                     "a10q02_single_expected3.txt")
+check.expect("No Triple Double", triple_doubles("players3.txt",
+                                            "a10q02_single_actual3.txt"), None)
+
+##players4.txt contains:
+##Michael Jordan, 1, 2, 50, 20, 60, 20
+##Michael Jordan, 2, 50, 20, 10, 40, 20
+##Michael Jordan, 3, 10, 2, 9, 10, 2
+##Michael Jordan, 4, 20, 40, 10, 20, 89
+##Michael Jordan, 5, 20, 10, 20, 40, 90
+
+##a10q02_single_actual4.txt contains:
+##Michael Jordan,4
+
+check.set_file_exact("a10q02_single_actual4.txt",
+                     "a10q02_single_expected4.txt")
+check.expect("Typical Value", triple_doubles("players4.txt",
+                                            "a10q02_single_actual4.txt"), None)
